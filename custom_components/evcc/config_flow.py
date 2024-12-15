@@ -14,9 +14,7 @@ from .api import (
     IntegrationBlueprintApiClientCommunicationError,
     IntegrationBlueprintApiClientError,
 )
-from .const import DOMAIN, LOGGER
-
-CONF_TOPIC = "Topic"
+from .const import CONF_TOPIC, DOMAIN, LOGGER
 
 
 class EvccFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
@@ -33,6 +31,7 @@ class EvccFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             try:
                 await self._test_credentials(
+                    topic=user_input[CONF_TOPIC],
                     username=user_input[CONF_USERNAME],
                     password=user_input[CONF_PASSWORD],
                 )
@@ -81,9 +80,10 @@ class EvccFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             errors=_errors,
         )
 
-    async def _test_credentials(self, username: str, password: str) -> None:
+    async def _test_credentials(self, topic: str, username: str, password: str) -> None:
         """Validate credentials."""
         client = EvccApiClient(
+            topic=topic,
             username=username,
             password=password,
             session=async_create_clientsession(self.hass),

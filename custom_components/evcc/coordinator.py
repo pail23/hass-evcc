@@ -26,10 +26,7 @@ class EvccDataUpdateCoordinator(DataUpdateCoordinator):
 
     config_entry: EvccConfigEntry
 
-    def __init__(
-        self,
-        hass: HomeAssistant,
-    ) -> None:
+    def __init__(self, hass: HomeAssistant, topic: str) -> None:
         """Initialize."""
         super().__init__(
             hass=hass,
@@ -37,6 +34,7 @@ class EvccDataUpdateCoordinator(DataUpdateCoordinator):
             name=DOMAIN,
             update_interval=timedelta(hours=1),
         )
+        self.topic = topic
 
     async def _async_update_data(self) -> Any:
         """Update data via library."""

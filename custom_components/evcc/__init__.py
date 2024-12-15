@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 
 import logging
 
+from .const import CONF_TOPIC
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, Platform
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.loader import async_get_loaded_integration
@@ -42,11 +43,10 @@ async def async_setup_entry(
     entry: EvccConfigEntry,
 ) -> bool:
     """Set up this integration using UI."""
-    coordinator = EvccDataUpdateCoordinator(
-        hass=hass,
-    )
+    coordinator = EvccDataUpdateCoordinator(hass=hass, topic=entry.data[CONF_TOPIC])
     entry.runtime_data = EvccData(
         client=EvccApiClient(
+            topic=entry.data[CONF_TOPIC],
             username=entry.data[CONF_USERNAME],
             password=entry.data[CONF_PASSWORD],
             session=async_get_clientsession(hass),

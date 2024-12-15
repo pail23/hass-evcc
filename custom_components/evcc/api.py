@@ -40,11 +40,13 @@ class EvccApiClient:
 
     def __init__(
         self,
+        topic: str,
         username: str,
         password: str,
         session: aiohttp.ClientSession,
     ) -> None:
         """Sample API Client."""
+        self._topic = topic
         self._username = username
         self._password = password
         self._session = session

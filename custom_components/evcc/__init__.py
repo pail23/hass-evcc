@@ -9,13 +9,20 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import logging
+
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, Platform
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.loader import async_get_loaded_integration
 
+from homeassistant.components import mqtt
+
 from .api import EvccApiClient
 from .coordinator import EvccDataUpdateCoordinator
 from .data import EvccData
+
+
+_LOGGER = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
@@ -47,6 +54,12 @@ async def async_setup_entry(
         integration=async_get_loaded_integration(hass, entry.domain),
         coordinator=coordinator,
     )
+
+    async def message_received(msg):
+        _LOGGER.debug("New intent: %s", msg.payload)
+        print(msg.topic)
+
+    await mqtt.async_subscribe(hass, "evcc/#", message_received)
 
     # https://developers.home-assistant.io/docs/integration_fetching_data#coordinated-single-api-poll-for-data-for-all-entities
     await coordinator.async_config_entry_first_refresh()

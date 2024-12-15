@@ -16,8 +16,10 @@ from .api import (
 )
 from .const import DOMAIN, LOGGER
 
+CONF_TOPIC = "Topic"
 
-class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
+
+class EvccFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     """Config flow for Blueprint."""
 
     VERSION = 1
@@ -53,6 +55,14 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=vol.Schema(
                 {
+                    vol.Required(
+                        CONF_TOPIC,
+                        default=(user_input or {}).get(CONF_TOPIC, vol.UNDEFINED),
+                    ): selector.TextSelector(
+                        selector.TextSelectorConfig(
+                            type=selector.TextSelectorType.TEXT,
+                        ),
+                    ),
                     vol.Required(
                         CONF_USERNAME,
                         default=(user_input or {}).get(CONF_USERNAME, vol.UNDEFINED),

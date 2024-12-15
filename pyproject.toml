@@ -1,0 +1,53 @@
+[project]
+name = "hass-evcc"
+version = "0.1.0"
+description = "EVCC integration is Home Assistant"
+readme = "README.md"
+requires-python = ">=3.13"
+
+dependencies = [
+    "colorlog>=6.9.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.3",
+    "ruff>=0.8.3",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+pythonpath = [
+  ".",
+]
+testpaths = [
+    "tests"
+]
+addopts = "--disable-socket --allow-unix-socket"
+
+[tool.ruff]
+
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    "ALL",
+]
+
+ignore = [
+    "ANN401", # Dynamically typed expressions (typing.Any) are disallowed
+    "D203", # no-blank-line-before-class (incompatible with formatter)
+    "D212", # multi-line-summary-first-line (incompatible with formatter)
+    "COM812", # incompatible with formatter
+    "ISC001", # incompatible with formatter
+]
+
+[tool.ruff.lint.flake8-pytest-style]
+fixture-parentheses = false
+
+[tool.ruff.lint.pyupgrade]
+keep-runtime-typing = true
+
+[tool.ruff.lint.mccabe]
+max-complexity = 25

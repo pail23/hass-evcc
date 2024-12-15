@@ -1,4 +1,4 @@
-"""Custom types for integration_blueprint."""
+"""Custom types for hass_evcc."""
 
 from __future__ import annotations
 
@@ -9,17 +9,17 @@ if TYPE_CHECKING:
     from homeassistant.config_entries import ConfigEntry
     from homeassistant.loader import Integration
 
-    from .api import IntegrationBlueprintApiClient
-    from .coordinator import BlueprintDataUpdateCoordinator
+    from .api import EvccApiClient
+    from .coordinator import EvccDataUpdateCoordinator
 
 
-type IntegrationBlueprintConfigEntry = ConfigEntry[IntegrationBlueprintData]
+type EvccConfigEntry = ConfigEntry[EvccData]
 
 
 @dataclass
-class IntegrationBlueprintData:
+class EvccData:
     """Data for the Blueprint integration."""
 
-    client: IntegrationBlueprintApiClient
-    coordinator: BlueprintDataUpdateCoordinator
+    client: EvccApiClient
+    coordinator: EvccDataUpdateCoordinator
     integration: Integration

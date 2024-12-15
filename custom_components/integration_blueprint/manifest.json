@@ -1,12 +1,12 @@
 {
-  "domain": "integration_blueprint",
-  "name": "Integration blueprint",
+  "domain": "hass_evcc",
+  "name": "EVCC",
   "codeowners": [
-    "@ludeeus"
+    "@pail23"
   ],
   "config_flow": true,
-  "documentation": "https://github.com/ludeeus/integration_blueprint",
+  "documentation": "https://github.com/pail23/hass_evcc",
   "iot_class": "cloud_polling",
-  "issue_tracker": "https://github.com/ludeeus/integration_blueprint/issues",
+  "issue_tracker": "https://github.com/pail23/hass_evcc/issues",
   "version": "0.0.0"
 }

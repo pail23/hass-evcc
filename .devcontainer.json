@@ -1,7 +1,7 @@
 {
-    "name": "ludeeus/integration_blueprint",
+    "name": "pail23/hass_evcc",
     "image": "mcr.microsoft.com/devcontainers/python:3.12",
-    "postCreateCommand": "scripts/setup",
+    "postCreateCommand": "curl -LsSf https://astral.sh/uv/install.sh | sh && scripts/setup",
     "forwardPorts": [
         8123
     ],
@@ -37,5 +37,8 @@
         }
     },
     "remoteUser": "vscode",
-    "features": {}
+    "features": {},
+    "remoteEnv": {
+        "PATH": "${containerEnv:PATH}:/home/vscode/.local/bin"
+    }
 }

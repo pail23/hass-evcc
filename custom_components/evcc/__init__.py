@@ -50,7 +50,6 @@ async def async_setup_entry(
     await mqtt.async_subscribe(
         hass, f"{entry.data[CONF_TOPIC]}/#", entry.runtime_data.client.message_received
     )
-    print("Subscribed")
 
     await coordinator.async_config_entry_first_refresh()
 

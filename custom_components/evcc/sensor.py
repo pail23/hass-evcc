@@ -30,8 +30,6 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the sensor platform."""
-    loadpoints = entry.runtime_data.client.loadpoints
-    print(f"{len(loadpoints)} Loadpoints detected")
     async_add_entities(
         EvccSensor(
             coordinator=entry.runtime_data.coordinator,

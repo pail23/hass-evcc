@@ -1,5 +1,5 @@
 {
-  "domain": "hass_evcc",
+  "domain": "evcc",
   "name": "EVCC",
   "codeowners": [
     "@pail23"

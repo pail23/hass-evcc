@@ -9,7 +9,7 @@ from .const import ATTRIBUTION
 from .coordinator import EvccDataUpdateCoordinator
 
 
-class IntegrationBlueprintEntity(CoordinatorEntity[EvccDataUpdateCoordinator]):
+class EvccEntity(CoordinatorEntity[EvccDataUpdateCoordinator]):
     """BlueprintEntity class."""
 
     _attr_attribution = ATTRIBUTION

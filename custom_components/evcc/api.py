@@ -2,102 +2,49 @@
 
 from __future__ import annotations
 
-import socket
-from typing import Any
+import logging
 
-import aiohttp
-import async_timeout
+_LOGGER = logging.getLogger(__name__)
 
 
-class IntegrationBlueprintApiClientError(Exception):
+class EvccApiClientError(Exception):
     """Exception to indicate a general API error."""
 
 
-class IntegrationBlueprintApiClientCommunicationError(
-    IntegrationBlueprintApiClientError,
-):
-    """Exception to indicate a communication error."""
+class LoadPoint:
+    """Load point data."""
 
-
-class IntegrationBlueprintApiClientAuthenticationError(
-    IntegrationBlueprintApiClientError,
-):
-    """Exception to indicate an authentication error."""
-
-
-def _verify_response_or_raise(response: aiohttp.ClientResponse) -> None:
-    """Verify that the response is valid."""
-    if response.status in (401, 403):
-        msg = "Invalid credentials"
-        raise IntegrationBlueprintApiClientAuthenticationError(
-            msg,
-        )
-    response.raise_for_status()
+    def __init__(self) -> None:
+        self.chargedEnergy: float = 0
+        self.chargePower: float = 0
 
 
 class EvccApiClient:
-    """Sample API Client."""
+    """Evcc API Client."""
 
     def __init__(
         self,
         topic: str,
-        username: str,
-        password: str,
-        session: aiohttp.ClientSession,
     ) -> None:
-        """Sample API Client."""
+        """Evcc API Client."""
         self._topic = topic
-        self._username = username
-        self._password = password
-        self._session = session
+        self.loadpoints: dict[int, LoadPoint] = {}
 
-    async def async_get_data(self) -> Any:
-        """Get data from the API."""
-        return await self._api_wrapper(
-            method="get",
-            url="https://jsonplaceholder.typicode.com/posts/1",
-        )
-
-    async def async_set_title(self, value: str) -> Any:
-        """Get data from the API."""
-        return await self._api_wrapper(
-            method="patch",
-            url="https://jsonplaceholder.typicode.com/posts/1",
-            data={"title": value},
-            headers={"Content-type": "application/json; charset=UTF-8"},
-        )
-
-    async def _api_wrapper(
-        self,
-        method: str,
-        url: str,
-        data: dict | None = None,
-        headers: dict | None = None,
-    ) -> Any:
-        """Get information from the API."""
-        try:
-            async with async_timeout.timeout(10):
-                response = await self._session.request(
-                    method=method,
-                    url=url,
-                    headers=headers,
-                    json=data,
-                )
-                _verify_response_or_raise(response)
-                return await response.json()
-
-        except TimeoutError as exception:
-            msg = f"Timeout error fetching information - {exception}"
-            raise IntegrationBlueprintApiClientCommunicationError(
-                msg,
-            ) from exception
-        except (aiohttp.ClientError, socket.gaierror) as exception:
-            msg = f"Error fetching information - {exception}"
-            raise IntegrationBlueprintApiClientCommunicationError(
-                msg,
-            ) from exception
-        except Exception as exception:  # pylint: disable=broad-except
-            msg = f"Something really wrong happened! - {exception}"
-            raise IntegrationBlueprintApiClientError(
-                msg,
-            ) from exception
+    async def message_received(self, msg) -> None:
+        """Handle evcc mqtt messages."""
+        _LOGGER.debug("New message: %s=%s", msg.topic, msg.payload)
+        # print(f"{msg.topic}={msg.payload}")
+        parts = msg.topic.split("/")
+        if len(parts) > 3:
+            if parts[1] == "loadpoints":
+                id = int(parts[2])
+                loadpoint = self.loadpoints.get(id)
+                if loadpoint is None:
+                    loadpoint = LoadPoint()
+                    self.loadpoints[id] = loadpoint
+                if parts[3] == "chargedEnergy":
+                    loadpoint.chargedEnergy = float(msg.payload)
+                    print(f"{id}: Charged Energy={loadpoint.chargedEnergy}")
+                elif parts[3] == "chargePower":
+                    loadpoint.chargePower = float(msg.payload)
+                    print(f"{id}: Charged Power={loadpoint.chargePower}")

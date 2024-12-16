@@ -3,10 +3,12 @@ name = "hass-evcc"
 version = "0.1.0"
 description = "EVCC integration is Home Assistant"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 
 dependencies = [
     "colorlog>=6.9.0",
+    "homeassistant>=2024.12.3",
+    "pytest-homeassistant-custom-component>=0.13.193",
 ]
 
 [dependency-groups]

@@ -5,8 +5,11 @@
     "@pail23"
   ],
   "config_flow": true,
+  "dependencies": [
+    "mqtt"
+  ],
   "documentation": "https://github.com/pail23/hass_evcc",
-  "iot_class": "cloud_polling",
+  "iot_class": "local_push",
   "issue_tracker": "https://github.com/pail23/hass_evcc/issues",
   "version": "0.0.0"
 }

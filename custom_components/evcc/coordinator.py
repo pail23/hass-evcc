@@ -5,13 +5,8 @@ from __future__ import annotations
 from datetime import timedelta
 from typing import TYPE_CHECKING, Any
 
-from homeassistant.exceptions import ConfigEntryAuthFailed
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .api import (
-    IntegrationBlueprintApiClientAuthenticationError,
-    IntegrationBlueprintApiClientError,
-)
 from .const import DOMAIN, LOGGER
 
 if TYPE_CHECKING:
@@ -32,15 +27,10 @@ class EvccDataUpdateCoordinator(DataUpdateCoordinator):
             hass=hass,
             logger=LOGGER,
             name=DOMAIN,
-            update_interval=timedelta(hours=1),
+            update_interval=timedelta(seconds=10),
         )
         self.topic = topic
 
     async def _async_update_data(self) -> Any:
         """Update data via library."""
-        try:
-            return await self.config_entry.runtime_data.client.async_get_data()
-        except IntegrationBlueprintApiClientAuthenticationError as exception:
-            raise ConfigEntryAuthFailed(exception) from exception
-        except IntegrationBlueprintApiClientError as exception:
-            raise UpdateFailed(exception) from exception
+        return {"loadpoints": self.config_entry.runtime_data.client.loadpoints}

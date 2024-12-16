@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
 
-from .entity import IntegrationBlueprintEntity
+from .entity import EvccEntity
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
@@ -17,8 +17,8 @@ if TYPE_CHECKING:
 
 ENTITY_DESCRIPTIONS = (
     SensorEntityDescription(
-        key="hass_evcc",
-        name="Integration Sensor",
+        key="hass_evcc_charged_energy",
+        name="Charged Energy",
         icon="mdi:format-quote-close",
     ),
 )
@@ -30,8 +30,10 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the sensor platform."""
+    loadpoints = entry.runtime_data.client.loadpoints
+    print(f"{len(loadpoints)} Loadpoints detected")
     async_add_entities(
-        IntegrationBlueprintSensor(
+        EvccSensor(
             coordinator=entry.runtime_data.coordinator,
             entity_description=entity_description,
         )
@@ -39,7 +41,7 @@ async def async_setup_entry(
     )
 
 
-class IntegrationBlueprintSensor(IntegrationBlueprintEntity, SensorEntity):
+class EvccSensor(EvccEntity, SensorEntity):
     """hass_evcc Sensor class."""
 
     def __init__(
@@ -54,4 +56,7 @@ class IntegrationBlueprintSensor(IntegrationBlueprintEntity, SensorEntity):
     @property
     def native_value(self) -> str | None:
         """Return the native value of the sensor."""
-        return self.coordinator.data.get("body")
+        loadpoints = self.coordinator.data.get("loadpoints")
+        loadpoint = loadpoints.get(1)
+
+        return loadpoint.chargedEnergy if loadpoint is not None else None

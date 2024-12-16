@@ -4,17 +4,10 @@ from __future__ import annotations
 
 import voluptuous as vol
 from homeassistant import config_entries, data_entry_flow
-from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
+from homeassistant.const import CONF_USERNAME
 from homeassistant.helpers import selector
-from homeassistant.helpers.aiohttp_client import async_create_clientsession
 
-from .api import (
-    EvccApiClient,
-    IntegrationBlueprintApiClientAuthenticationError,
-    IntegrationBlueprintApiClientCommunicationError,
-    IntegrationBlueprintApiClientError,
-)
-from .const import CONF_TOPIC, DOMAIN, LOGGER
+from .const import CONF_TOPIC, DOMAIN
 
 
 class EvccFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
@@ -29,26 +22,10 @@ class EvccFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         """Handle a flow initialized by the user."""
         _errors = {}
         if user_input is not None:
-            try:
-                await self._test_credentials(
-                    topic=user_input[CONF_TOPIC],
-                    username=user_input[CONF_USERNAME],
-                    password=user_input[CONF_PASSWORD],
-                )
-            except IntegrationBlueprintApiClientAuthenticationError as exception:
-                LOGGER.warning(exception)
-                _errors["base"] = "auth"
-            except IntegrationBlueprintApiClientCommunicationError as exception:
-                LOGGER.error(exception)
-                _errors["base"] = "connection"
-            except IntegrationBlueprintApiClientError as exception:
-                LOGGER.exception(exception)
-                _errors["base"] = "unknown"
-            else:
-                return self.async_create_entry(
-                    title=user_input[CONF_USERNAME],
-                    data=user_input,
-                )
+            return self.async_create_entry(
+                title=user_input[CONF_USERNAME],
+                data=user_input,
+            )
 
         return self.async_show_form(
             step_id="user",
@@ -62,30 +39,7 @@ class EvccFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                             type=selector.TextSelectorType.TEXT,
                         ),
                     ),
-                    vol.Required(
-                        CONF_USERNAME,
-                        default=(user_input or {}).get(CONF_USERNAME, vol.UNDEFINED),
-                    ): selector.TextSelector(
-                        selector.TextSelectorConfig(
-                            type=selector.TextSelectorType.TEXT,
-                        ),
-                    ),
-                    vol.Required(CONF_PASSWORD): selector.TextSelector(
-                        selector.TextSelectorConfig(
-                            type=selector.TextSelectorType.PASSWORD,
-                        ),
-                    ),
                 },
             ),
             errors=_errors,
         )
-
-    async def _test_credentials(self, topic: str, username: str, password: str) -> None:
-        """Validate credentials."""
-        client = EvccApiClient(
-            topic=topic,
-            username=username,
-            password=password,
-            session=async_create_clientsession(self.hass),
-        )
-        await client.async_get_data()

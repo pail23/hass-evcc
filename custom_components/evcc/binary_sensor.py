@@ -10,7 +10,7 @@ from homeassistant.components.binary_sensor import (
     BinarySensorEntityDescription,
 )
 
-from .entity import IntegrationBlueprintEntity
+from .entity import EvccEntity
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
@@ -43,7 +43,7 @@ async def async_setup_entry(
     )
 
 
-class IntegrationBlueprintBinarySensor(IntegrationBlueprintEntity, BinarySensorEntity):
+class IntegrationBlueprintBinarySensor(EvccEntity, BinarySensorEntity):
     """hass_evcc binary_sensor class."""
 
     def __init__(

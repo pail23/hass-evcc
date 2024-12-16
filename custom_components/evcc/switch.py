@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any
 
 from homeassistant.components.switch import SwitchEntity, SwitchEntityDescription
 
-from .entity import IntegrationBlueprintEntity
+from .entity import EvccEntity
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
@@ -39,7 +39,7 @@ async def async_setup_entry(
     )
 
 
-class IntegrationBlueprintSwitch(IntegrationBlueprintEntity, SwitchEntity):
+class IntegrationBlueprintSwitch(EvccEntity, SwitchEntity):
     """hass_evcc switch class."""
 
     def __init__(
@@ -58,10 +58,10 @@ class IntegrationBlueprintSwitch(IntegrationBlueprintEntity, SwitchEntity):
 
     async def async_turn_on(self, **_: Any) -> None:
         """Turn on the switch."""
-        await self.coordinator.config_entry.runtime_data.client.async_set_title("bar")
+        # await self.coordinator.config_entry.runtime_data.client.async_set_title("bar")
         await self.coordinator.async_request_refresh()
 
     async def async_turn_off(self, **_: Any) -> None:
         """Turn off the switch."""
-        await self.coordinator.config_entry.runtime_data.client.async_set_title("foo")
+        # await self.coordinator.config_entry.runtime_data.client.async_set_title("foo")
         await self.coordinator.async_request_refresh()

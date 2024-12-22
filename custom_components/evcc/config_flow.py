@@ -23,7 +23,7 @@ class EvccFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         _errors = {}
         if user_input is not None:
             return self.async_create_entry(
-                title=user_input[CONF_USERNAME],
+                title="Evcc",
                 data=user_input,
             )
 

@@ -27,9 +27,9 @@ if TYPE_CHECKING:
     from .data import EvccConfigEntry
 
 PLATFORMS: list[Platform] = [
-    Platform.SENSOR,
-    Platform.BINARY_SENSOR,
-    Platform.SWITCH,
+    Platform.SENSOR
+    #    Platform.BINARY_SENSOR,
+    #    Platform.SWITCH,
 ]
 
 

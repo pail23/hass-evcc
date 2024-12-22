@@ -21,7 +21,19 @@ class LoadPoint:
     def __init__(self) -> None:
         """Create a new LoadPoint instance."""
         self.chargedEnergy: float = 0
+        self.totalChargedEnergy: float = 0
         self.chargePower: float = 0
+        self.title = ""
+        self.chargeDuration: float = 0  # in seconds
+        self.chargeRemainingDuration: float = 0  # in seconds
+        self.chargeRemainingEnergy: float = 0
+        self.vehicleSoc: float = 0
+        self.vehicleLimitSoc: float = 0
+        self.vehicleRange: float = 0
+        self.phasesActive: int = 0
+        self.currentPhase1: float = 0
+        self.currentPhase2: float = 0
+        self.currentPhase3: float = 0
 
 
 class Vehicle:
@@ -31,6 +43,7 @@ class Vehicle:
         """Create a new Vehicle instance."""
         self.title: str = ""
         self.capacity: float = 0
+        self.title = ""
 
 
 class EvccApiClient:
@@ -60,9 +73,40 @@ class EvccApiClient:
                     loadpoint.chargedEnergy = float(msg.payload)
                 elif parts[3] == "chargePower":
                     loadpoint.chargePower = float(msg.payload)
+                elif parts[3] == "title":
+                    loadpoint.title = str(msg.payload)
+                elif parts[3] == "chargeTotalImport":
+                    loadpoint.totalChargedEnergy = float(msg.payload)
+                elif parts[3] == "chargeDuration":
+                    loadpoint.chargeDuration = float(msg.payload)
+                elif parts[3] == "chargeRemainingDuration":
+                    loadpoint.chargeRemainingDuration = float(msg.payload)
+                elif parts[3] == "chargeRemainingEnergy":
+                    loadpoint.chargeRemainingEnergy = float(msg.payload)
+                elif parts[3] == "vehicleSoc":
+                    loadpoint.vehicleSoc = float(msg.payload)
+                elif parts[3] == "vehicleLimitSoc":
+                    loadpoint.vehicleLimitSoc = float(msg.payload)
+                elif parts[3] == "vehicleRange":
+                    loadpoint.vehicleRange = float(msg.payload)
+                elif parts[3] == "phasesActive":
+                    loadpoint.phasesActive = int(msg.payload)
+                elif parts[3] == "chargeCurrents" and len(parts) > 4:
+                    if parts[4] == "l1":
+                        loadpoint.currentPhase1 = float(msg.payload)
+                    elif parts[4] == "l2":
+                        loadpoint.currentPhase2 = float(msg.payload)
+                    elif parts[4] == "l3":
+                        loadpoint.currentPhase3 = float(msg.payload)
             elif parts[1] == "vehicle":
                 identifier = int(parts[2])
                 vehicle = self.vehicles.get(identifier)
                 if vehicle is None:
                     vehicle = Vehicle()
                     self.vehicles[identifier] = vehicle
+                if parts[3] == "title":
+                    vehicle.title = str(msg.payload)
+                elif parts[3] == "capacity":
+                    vehicle.capacity = float(msg.payload)
+                elif parts[3] == "title":
+                    vehicle.title = str(msg.payload)
